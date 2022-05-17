@@ -276,8 +276,16 @@ def intg_2D(FX, FY, min_grid=np.array((-np.pi, -np.pi)), max_grid=np.array((np.p
 
     return [X, Y, fes]
 
-
+#@jit(nopython=True)
 def intgrad2(fx,fy,nx,ny,dx,dy,intconst,per1,per2,min_grid,max_grid,nbins):
+
+    '''
+
+    This function uses the inverse of the gradient to reconstruct the free energy surface from the mean force components.
+
+    [John D'Errico (2022). Inverse (integrated) gradient (https://www.mathworks.com/matlabcentral/fileexchange/9734-inverse-integrated-gradient), MATLAB Central File Exchange. Retrieved May 17, 2022.]
+
+    '''
 	
     gridx = np.linspace(min_grid[0], max_grid[0], nbins[0])
     gridy = np.linspace(min_grid[1], max_grid[1], nbins[1])
@@ -380,7 +388,10 @@ def intgrad2(fx,fy,nx,ny,dx,dy,intconst,per1,per2,min_grid,max_grid,nbins):
     A=sps.csc_matrix((Af[:,2],(Af[:,0],Af[:,1])),shape=(2*ny*nx,ny*nx))
     fhat=spsl.lsmr(A,rhs)
     fhat=fhat[0]
-    
+    fhat = np.reshape(fhat,nbins) 
+    #print(fhat.shape)   
+    fhat = fhat - np.min(fhat)
+
     return [X, Y, fhat]
 
 

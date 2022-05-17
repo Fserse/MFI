@@ -13,13 +13,19 @@ import matplotlib.pyplot as plt
 #   PATCH INDEPENDENT SIMULATIONS   #
 #####################################
 
+X = np.linspace(0, 16, 200)
+Y = np.linspace(-np.pi, np.pi, 200)
+
+dx = np.abs( X[0] - X[1] )
+dy = np.abs( Y[0] - Y[1] )
+#print(dx,dy)
+
+#exit()
 master = []
 all_hills= []
 error_history = []
 
 FP = np.zeros((200,200))
-
-
 
 HILLS=MFI.load_HILLS_2D(hills_name="HILLS")
 #plt.plot(HILLS[:,1],HILLS[:,2],'.')
@@ -32,9 +38,6 @@ master.append([Ftot_den, Ftot_den2, Ftot_x, Ftot_y, ofv_x, ofv_y])
 [FX,FY,FD,error] = MFI.patch_2D_error(master)
 
 error_history.append(sum(sum(error)) / (np.shape(error)[0]*np.shape(error)[1]))
-
-dx = np.abs( X[0] - X[1] )
-dy = np.abs( Y[0] - Y[1] )
 
 #integration on a periodic domain
 #[X, Y, FES] = MFI.intg_2D(FX, FY, min_grid=np.array((0, -np.pi)), max_grid=np.array((16, np.pi)), nbins = np.array((200,200)))
