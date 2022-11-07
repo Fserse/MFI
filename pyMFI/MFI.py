@@ -347,11 +347,11 @@ def MFI_2D(HILLS="HILLS", position_x="position_x", position_y="position_y", bw=1
 		F_static_x += Force_x
 		F_static_y += Force_y
 	if lw_kappa_x > 0 or lw_kappa_y > 0:
-		[Force_x, Force_y] = find_lw_force(lw_centre_x, lw_centre_y, lw_kappa_x, lw_kappa_y, X , Y, periodic)
+		[Force_x, Force_y] = find_lw_force(lw_centre_x, lw_centre_y, lw_kappa_x, lw_kappa_y, X , Y, min_grid, max_grid, grid_space, periodic)
 		F_static_x += Force_x
 		F_static_y += Force_y
 	if uw_kappa_x > 0 or uw_kappa_y > 0:
-		[Force_x, Force_y] = find_uw_force(uw_centre_x, uw_centre_y, uw_kappa_x, uw_kappa_y, X , Y, periodic)
+		[Force_x, Force_y] = find_uw_force(uw_centre_x, uw_centre_y, uw_kappa_x, uw_kappa_y, X , Y, min_grid, max_grid, grid_space, periodic)
 		F_static_x += Force_x
 		F_static_y += Force_y
 
@@ -997,13 +997,15 @@ def bootstrap_2D(X, Y, forces_all, n_bootstrap, FES_cutoff = 0, FFT_integration=
 	return [FES_avr, cutoff, var_fes, sd_fes, var_fes_prog, sd_fes_prog ]
 
 
-def bootstrap_2D_fes(X, Y, forces_all, n_bootstrap, FES_cutoff = 0, FFT_integration=0, min_grid=np.array((-3, -3)), max_grid=np.array((3, 3))):
+def bootstrap_2D_fes(X, Y, dx, dy, forces_all, n_bootstrap, FES_cutoff = 0, FFT_integration=0, min_grid=np.array((-3, -3)), max_grid=np.array((3, 3))):
 	"""Algorithm to determine bootstrap error
 
 	Args:
 		X: array of size (nbins[0], nbins[1]) - CV1 grid positions
 		Y: array of size (nbins[0], nbins[1]) - CV2 grid positions
-		forces_all (list): collection of force terms (n * [Ftot_den, Ftot_x, Ftot_y])
+		dx
+        dy
+        forces_all (list): collection of force terms (n * [Ftot_den, Ftot_x, Ftot_y])
 		n_bootstrap (int): bootstrap iterations
 
 	Returns:
@@ -1041,7 +1043,7 @@ def bootstrap_2D_fes(X, Y, forces_all, n_bootstrap, FES_cutoff = 0, FFT_integrat
 		
 		#Calculate FES. if there is a FES_cutoff, find cutoff. 
 		if FFT_integration == 1: [X, Y, FES] = FFT_intg_2D(Ftot_x, Ftot_y, min_grid=min_grid, max_grid=max_grid)
-		else: [X, Y, FES] = intgrad2(Ftot_x, Ftot_y, min_grid=min_grid, max_grid=max_grid)
+		else: [X, Y, FES] = intgrad2(Ftot_x, Ftot_y, 200, 200,0,False,False, min_grid, max_grid,  np.array((200,200)))
 
 		#Save FES
 		FES_collection.append(FES) 
